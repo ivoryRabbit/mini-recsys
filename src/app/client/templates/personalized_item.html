@@ -1,0 +1,78 @@
+{% extends "layout-base.html" %}
+{% block content %}
+<div class="container">
+    <div class="d-flex flex-row">
+        <h3 class="d-inline-flex p-3">Personalized Movie Recommendation</h3>
+        <div class="d-inline-flex p-3">
+            <a href="{{ url_for('index') }}">Home</a>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="row p-3">
+        <form class="col-8" action="{{ url_for('get_personalized_item') }}" method="get">
+            <div class="row">
+                <div class="col-6">
+                    <input type="text" class="form-control" name="user_id" value="{{ user_id }}" placeholder="User ID">
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-primary mx-1" type="submit">Output</button>
+                </div>
+                <div class="col-2">
+                    <a class="btn btn-success" href="{{ url_for('get_personalized_item') }}?is_random=true" role="button">Random</a>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <hr>
+
+    <div class="d-flex flex-row">
+        <div class="col p-3">
+            {% if seed_items %}
+            <h4>[Seed Movies] (#{{ seed_items|length }})</h4>
+            <table class="table table-sm caption-top">
+                <div class="row">
+                    {% for seed_item in seed_items %}
+                    <div class="row-cols-auto border px-2 py-2 small">
+                        <div class="mb-1">item_id: {{ seed_item['item_id'] }}</div>
+                        <div class="mb-1">title: {{ seed_item['title'] }}</div>
+                        <div class="mb-1">genres: {{ seed_item['genres'] }}</div>
+                        <div class="mb-1">genres: {{ seed_item['year'] }}</div>
+                        <a href="{{ seed_item['url'] }}">Link</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </table>
+            {% endif %}
+        </div>
+        <div class="col p-3">
+            {% if rec_items %}
+            <h4>[Recommended Movies] (#{{ rec_items|length }})</h4>
+            <table class="table table-sm caption-top">
+                <div class="row">
+                    {% for rec_item in rec_items %}
+                    <div class="row-cols-auto border px-2 py-2 small">
+                        <div class="mb-1">item_id: {{ rec_item['item_id'] }}</div>
+                        <div class="mb-1">title: {{ rec_item['title'] }}</div>
+                        <div class="mb-1">genres: {{ rec_item['genres'] }}</div>
+                        <div class="mb-1">genres: {{ rec_item['year'] }}</div>
+                        <a href="{{ rec_item['url'] }}">Link</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </table>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if user_id is defined and user_id|int > 0 %}
+<script>
+    window.history.replaceState(null, null, "?user_id={{ user_id }}");
+</script>
+{% endif %}
+
+{% endblock %}

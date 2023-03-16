@@ -1,0 +1,13 @@
+version: "3.7"
+services:
+  redis-standalone:
+    image: redis:7.0.4-alpine
+    container_name: key-value-store
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    ports:
+      - 6379:6379
