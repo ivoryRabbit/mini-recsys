@@ -2,75 +2,78 @@
 {% block content %}
 <div class="container">
     <div class="d-flex flex-row">
-        <h3 class="d-inline-flex p-2">Best Movie Recommendation</h3>
-        <div class="d-inline-flex p-2">
+        <h3 class="d-inline-flex p-3">Bestseller Movie Recommendation</h3>
+        <div class="d-inline-flex p-3">
             <a href="{{ url_for('index') }}">Home</a>
         </div>
     </div>
+
     <hr>
+
     <div class="row p-3">
-        <form class="col-6" action="{{ url_for('get_personalized_item') }}" method="get">
+        <form class="col-8" action="{{ url_for('get_bestseller_item') }}" method="get">
             <div class="row">
-                <div class="col-3">
-                    PID:
-                </div>
                 <div class="col-6">
-                    <input type="text" class="form-control" name="user_id" value="{{ user_id }}">
+                    <input type="text" class="form-control" name="genre" value="{{ genre }}" placeholder="Genre">
                 </div>
-                <div class="col-3">
-                    <button type="submit" class="btn btn-primary mx-1">결과</button>
+                <div class="col-2">
+                    <button class="btn btn-primary mx-1" type="submit">Output</button>
                 </div>
+                <div class="col-2">
+                    <a class="btn btn-success" href="{{ url_for('get_bestseller_item') }}?is_random=true" role="button">Random</a>
+                </div>
+
             </div>
         </form>
     </div>
-    <div class="row px-3">
-        <div class="col">
-            <a href="{{ url_for('get_personalized_item') }}?is_random=true">랜덤 유저</a>
-        </div>
-    </div>
+
     <hr>
 
     <div class="d-flex flex-row">
-        <div class="col p-2">
-            {% if seed_items %}
-            <h4>[시드 상품] <caption> (상품수 : {{ seed_items|length }}개) </caption></h4>
+        <div class="col p-3">
+            {% if popular_items %}
+            <h4>[Popular Movies] (#{{ popular_items|length }})</h4>
             <table class="table table-sm caption-top">
                 <div class="row">
-                    {% for seed_item in seed_items %}
-                    <div class="col-4 border px-1 py-1 small">
-                        <a href="{{ seed_item['url'] }}">Link</a>
-                        <div class="mb-1">item_id: {{ seed_item['item_id'] }}</div>
-                        <div class="mb-1">title: {{ seed_item['title'] }}</div>
+                    {% for rec_item in popular_items %}
+                    <div class="row-cols-auto border px-2 py-2 small">
+                        <div class="mb-1">MovieID: {{ rec_item['item_id'] }}</div>
+                        <div class="mb-1">Title: {{ rec_item['title'] }}</div>
+                        <div class="mb-1">Genres: {{ rec_item['genres'] }}</div>
+                        <div class="mb-1">Release: {{ rec_item['year'] }}</div>
+                        <div class="mb-1">Popular: {{ rec_item['popular'] }}</div>
+                        <a href="{{ rec_item['url'] }}">Link</a>
                     </div>
                     {% endfor %}
                 </div>
             </table>
             {% endif %}
         </div>
-        <div class="col p-2">
-            {% if rec_items %}
-            <h4>[추천 상품] <caption> (상품수 : {{ rec_items|length }}개) </caption></h4>
+        <div class="col p-3">
+            {% if high_rated_items %}
+            <h4>[High Rated Movies] (#{{ high_rated_items|length }})</h4>
             <table class="table table-sm caption-top">
                 <div class="row">
-                    {% for rec_item in rec_items %}
-                    <div class="col-4 border px-1 py-1 small">
+                    {% for rec_item in high_rated_items %}
+                    <div class="row-cols-auto border px-2 py-2 small">
+                        <div class="mb-1">MovieID: {{ rec_item['item_id'] }}</div>
+                        <div class="mb-1">Title: {{ rec_item['title'] }}</div>
+                        <div class="mb-1">Genres: {{ rec_item['genres'] }}</div>
+                        <div class="mb-1">Release: {{ rec_item['year'] }}</div>
+                        <div class="mb-1">Rating: {{ rec_item['rating'] }}</div>
                         <a href="{{ rec_item['url'] }}">Link</a>
-                        <div class="mb-1">item_id: {{ rec_item['item_id'] }}</div>
-                        <div class="mb-1">title: {{ rec_item['title'] }}</div>
                     </div>
                     {% endfor %}
                 </div>
             </table>
-            {% else %}
-            <div>추천 결과 없음</div>
             {% endif %}
         </div>
     </div>
 </div>
 
-{% if user_id is defined and user_id|int > 0 %}
+{% if genre is defined and genre|int > 0 %}
 <script>
-    window.history.replaceState(null, null, "?user_id={{user_id}}");
+    window.history.replaceState(null, null, "?genre={{ genre }}");
 </script>
 {% endif %}
 

@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from app.api.model.response import DEFAULT_RESPONSES
 from app.api.config.router import router
 from app.api.config import scheduler, bootstrap
-from app.api.component import template, database, datamart
+from app.api.component import template, database
 
 with open("src/app/logging.yml") as f:
     logging_config = yaml.load(f, Loader=yaml.FullLoader)
@@ -50,7 +50,6 @@ async def app_startup() -> None:
 
     await scheduler.init_scheduler(app)
     await database.init_connection(app)
-    await datamart.init_connection(app)
 
 
 @app.on_event("shutdown")

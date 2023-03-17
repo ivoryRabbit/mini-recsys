@@ -4,10 +4,12 @@ import logging
 from collections import Counter
 from typing import List, Tuple
 
+from fastapi import Depends
 from fastapi.requests import Request
 
-from app.api.component.database import get_connection
+from app.api.model.dto import Movie
 from app.api.repository.graph import InteractionGraph
+from app.api.repository.item_repository import ItemRepository
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +23,7 @@ class RandomWalkService:
         n_p: int = 100,
         n_v: int = 10,
         beta: float = 0.95,
+        item_repository: ItemRepository = Depends(),
     ):
         self.total_steps = total_steps
         self.alpha = alpha
@@ -28,9 +31,9 @@ class RandomWalkService:
         self.n_v = n_v
         self.beta = beta
         self._graph: InteractionGraph = request.app.state.graph
-        self._connection = get_connection()
+        self._item_repository = item_repository
 
-    def inference(self, queries: List[str], top_k: int = 10) -> List[str]:
+    def inference(self, queries: List[str], top_k: int = 10) -> List[Movie]:
         total_counter = Counter()
         max_step = self.total_steps // len(queries)
 
@@ -46,7 +49,8 @@ class RandomWalkService:
                 total_counter.update({item: score})
 
         results = total_counter.most_common(top_k)
-        return self._refine_recommendation(results)
+        item_ids = self._refine_recommendation(results)
+        return self._item_repository.get_movie_metas(item_ids)
 
     def get_sample_items_from_user(self, user_id: str, size: int = 5) -> List[str]:
         return self._graph.get_sample_items_from_user(user_id, size)

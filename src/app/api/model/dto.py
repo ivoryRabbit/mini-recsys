@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, Any
+from typing import Optional, Dict, Any
 
 
 @dataclass
@@ -8,6 +8,8 @@ class Movie:
     title: str
     year: int
     genres: str
+    popular: Optional[int] = None
+    rating: Optional[float] = None
 
     def __post_init__(self):
         self.url = f"https://movielens.org/movies/{self.item_id}"
@@ -20,4 +22,6 @@ class Movie:
             "year": self.year,
             "genres": self.genres,
             "url": self.url,
+            "popular": self.popular,
+            "rating": self.rating,
         }

@@ -1,10 +1,11 @@
-import math
-import random
 import logging
-from collections import Counter
-from typing import List, Tuple, Optional
+from typing import List
 
-from app.api.component.datamart import get_connection
+from fastapi import Depends
+
+from app.api.model.dto import Movie
+from app.api.repository.bestseller_repository import BestsellerRepository
+from app.api.repository.item_repository import ItemRepository
 
 logger = logging.getLogger(__name__)
 
@@ -12,18 +13,26 @@ logger = logging.getLogger(__name__)
 class BestsellerService:
     def __init__(
         self,
-        total_steps: int = 10000,
-        alpha: float = 0.3,
-        n_p: int = 100,
-        n_v: int = 10,
-        beta: float = 0.95,
+        bestseller_repository: BestsellerRepository = Depends(),
+        item_repository: ItemRepository = Depends(),
     ):
-        self.total_steps = total_steps
-        self.alpha = alpha
-        self.n_p = n_p
-        self.n_v = n_v
-        self.beta = beta
-        self._connection = get_connection()
+        self._bestseller_repository = bestseller_repository
+        self._item_repository = item_repository
 
-    def inference(self, queries: List[int], top_k: int = 10) -> List[int]:
-        pass
+    def get_popular_movies(self, genre: str, top_k: int = 10) -> List[Movie]:
+        item_ids, populars = self._bestseller_repository.get_bestseller_by_popular(genre, top_k)
+        movies = self._item_repository.get_movie_metas(item_ids)
+
+        for movie, popular in zip(movies, populars):
+            movie.popular = popular
+
+        return movies
+
+    def get_high_rated_movies(self, genre: str, top_k: int = 10) -> List[Movie]:
+        item_ids, ratings = self._bestseller_repository.get_bestseller_by_rating(genre, top_k)
+        movies = self._item_repository.get_movie_metas(item_ids)
+
+        for movie, rating in zip(movies, ratings):
+            movie.rating = rating
+
+        return movies

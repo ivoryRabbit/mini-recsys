@@ -37,10 +37,10 @@
                 <div class="row">
                     {% for seed_item in seed_items %}
                     <div class="row-cols-auto border px-2 py-2 small">
-                        <div class="mb-1">item_id: {{ seed_item['item_id'] }}</div>
-                        <div class="mb-1">title: {{ seed_item['title'] }}</div>
-                        <div class="mb-1">genres: {{ seed_item['genres'] }}</div>
-                        <div class="mb-1">genres: {{ seed_item['year'] }}</div>
+                        <div class="mb-1">MovieID: {{ seed_item['item_id'] }}</div>
+                        <div class="mb-1">Title: {{ seed_item['title'] }}</div>
+                        <div class="mb-1">Genres: {{ seed_item['genres'] }}</div>
+                        <div class="mb-1">Release: {{ seed_item['year'] }}</div>
                         <a href="{{ seed_item['url'] }}">Link</a>
                     </div>
                     {% endfor %}
@@ -55,10 +55,10 @@
                 <div class="row">
                     {% for rec_item in rec_items %}
                     <div class="row-cols-auto border px-2 py-2 small">
-                        <div class="mb-1">item_id: {{ rec_item['item_id'] }}</div>
-                        <div class="mb-1">title: {{ rec_item['title'] }}</div>
-                        <div class="mb-1">genres: {{ rec_item['genres'] }}</div>
-                        <div class="mb-1">genres: {{ rec_item['year'] }}</div>
+                        <div class="mb-1">MovieID: {{ rec_item['item_id'] }}</div>
+                        <div class="mb-1">Title: {{ rec_item['title'] }}</div>
+                        <div class="mb-1">Genres: {{ rec_item['genres'] }}</div>
+                        <div class="mb-1">Release: {{ rec_item['year'] }}</div>
                         <a href="{{ rec_item['url'] }}">Link</a>
                     </div>
                     {% endfor %}

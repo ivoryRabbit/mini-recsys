@@ -6,14 +6,14 @@ from app.api.component.database import get_connection
 logger = logging.getLogger(__name__)
 
 
-class UserRepository:
+class GenreRepository:
     def __init__(self):
         self._connection = get_connection()
 
-    def get_random_user_id(self) -> Optional[str]:
+    def get_random_genre(self) -> Optional[str]:
         query = f"""
-            SELECT user_id
-            FROM users
+            SELECT genre
+            FROM genres
             USING SAMPLE 1
             """
 

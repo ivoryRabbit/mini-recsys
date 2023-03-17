@@ -1,16 +1,15 @@
 import logging
 from typing import List, Optional
 
-from duckdb import DuckDBPyConnection
-
+from app.api.component.database import get_connection
 from app.api.model.dto import Movie
 
 logger = logging.getLogger(__name__)
 
 
 class ItemRepository:
-    def __init__(self, connection: DuckDBPyConnection):
-        self._connection = connection
+    def __init__(self):
+        self._connection = get_connection()
 
     def get_movie_meta(self, item_id: str) -> Optional[Movie]:
         query = f"""
@@ -25,7 +24,7 @@ class ItemRepository:
             return None
 
         movie = Movie(
-            item_id=int(row[0]),
+            item_id=str(row[0]),
             title=str(row[1]),
             genres=str(row[2]),
             year=int(row[3]),
@@ -34,6 +33,9 @@ class ItemRepository:
         return movie
 
     def get_movie_metas(self, item_ids: List[str]) -> List[Movie]:
+        if len(item_ids) == 0:
+            return list()
+
         predicate = ", ".join([str(item_id) for item_id in item_ids])
 
         query = f"""

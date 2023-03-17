@@ -48,6 +48,19 @@ async def init_connection(app: FastAPI) -> None:
             AUTO_DETECT FALSE, HEADER TRUE
         );
         """,
+        f"""
+        CREATE TABLE bestseller AS (
+            SELECT item_id, COUNT(user_id) AS popular, ROUND(AVG(rating), 3) AS rating
+            FROM '{app.state.ratings_filename}'
+            GROUP BY 1
+        );
+        """,
+        f"""
+        CREATE TABLE genres AS (
+            SELECT DISTINCT UNNEST(STR_SPLIT(genres, '|')) AS genre
+            FROM movies
+        );
+        """,
     ]
 
     for query in queries:
