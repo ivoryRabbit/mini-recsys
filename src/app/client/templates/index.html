@@ -1,22 +1,22 @@
 {% extends "layout-base.html" %}
 {% block content %}
 <div class="container">
-    <div class="row my-3">
-        <h2 class="mb-3">FastAPI Mini-RecSys</h2>
+    <div class="my-3">
+        <h2 class="me-3">FastAPI Mini-RecSys</h2>
     </div>
     <hr>
     <div class="row my-3">
-        <div class="col-12">
+        <div class="col-6">
             <a href="{{ url_for('get_bestseller_item') }}">Bestseller Movie Recommendation</a>
         </div>
     </div>
     <div class="row my-3">
-        <div class="col-12">
+        <div class="col-6">
             <a href="{{ url_for('get_personalized_item') }}">Personalized Movie Recommendation</a>
         </div>
     </div>
     <div class="row my-3">
-        <div class="col-12">
+        <div class="col-6">
             <a href="{{ url_for('get_related_item') }}">Related Movie Recommendation</a>
         </div>
     </div>

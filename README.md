@@ -16,5 +16,10 @@ python3 src/app/main.py
 ```
 
 ## URL
-- http://0.0.0.0:5000/
-- http://0.0.0.0:5000/docs
+- http://localhost:5000/
+- http://localhost:5000/docs
+
+## TODO
+- [ ] execute app with gunicorn
+- [ ] execute app on docker container
+- [ ] make up front side 

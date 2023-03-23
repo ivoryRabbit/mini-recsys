@@ -17,9 +17,7 @@ def scheduled(
     max_repetitions: Optional[int] = None,
 ) -> Callable:
     def decorator(func: Callable) -> Callable:
-        is_coroutine = asyncio.iscoroutinefunction(func)
-
-        if is_coroutine is True:
+        if asyncio.iscoroutinefunction(func) is True:
             raise ValueError("Input function should be non-asynchronous")
 
         @wraps(func)

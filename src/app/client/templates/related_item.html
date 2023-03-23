@@ -1,26 +1,25 @@
 {% extends "layout-base.html" %}
 {% block content %}
 <div class="container">
-    <div class="d-flex flex-row">
-        <h3 class="d-inline-flex p-2">Related Movie Recommendation</h3>
-        <div class="d-inline-flex p-2">
-            <a href="{{ url_for('index') }}">Home</a>
-        </div>
+    <div class="my-3">
+        <h2 class="me-3">Related Movie Recommendation <a href="{{ url_for('index') }}" style="font-size: 15px; vertical-align: top">[Home]</a></h2>
     </div>
 
     <hr>
 
-    <div class="row p-3">
-        <form class="col-8" action="{{ url_for('get_related_item') }}" method="get">
+    <div class="row my-4">
+        <form class="col-6" action="{{ url_for('get_related_item') }}" method="get">
             <div class="row">
-                <div class="col-6">
-                    <input type="text" class="form-control" name="item_id" value="{{ item_id }}" placeholder="User ID">
+                <div class="col-4">
+                    <label>
+                        <input type="text" class="form-control" name="item_id" value="{{ item_id }}" placeholder="Movie ID">
+                    </label>
                 </div>
                 <div class="col-2">
-                    <button class="btn btn-primary mx-1" type="submit">Output</button>
+                    <button class="btn btn-outline-success mx-1" type="submit">Output</button>
                 </div>
                 <div class="col-2">
-                    <a class="btn btn-success" href="{{ url_for('get_related_item') }}?is_random=true" role="button">Random</a>
+                    <a class="btn btn-outline-primary mx-1" href="{{ url_for('get_related_item') }}?is_random=true" role="button">Random</a>
                 </div>
 
             </div>
@@ -29,7 +28,7 @@
 
     <hr>
 
-    <div class="d-flex flex-row">
+    <div class="d-flex row">
         <div class="col p-3">
             {% if seed_item %}
             <h4>[Seed Movie] </h4>
@@ -66,11 +65,5 @@
         </div>
     </div>
 </div>
-
-{% if item_id is defined and item_id|int > 0 %}
-<script>
-    window.history.replaceState(null, null, "?item_id={{item_id}}");
-</script>
-{% endif %}
 
 {% endblock %}

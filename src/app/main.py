@@ -6,7 +6,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from app.api.model.response import DEFAULT_RESPONSES
 from app.api.config.router import router
 from app.api.config import scheduler, bootstrap
 from app.api.component import template, database
@@ -20,7 +19,6 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title="mini-recommender-system",
     version="0.1.0",
-    responses=DEFAULT_RESPONSES
 )
 
 app.add_middleware(
