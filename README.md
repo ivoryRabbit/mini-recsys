@@ -11,8 +11,8 @@ pip3 install -r requirements.txt
 ## Run
 
 ```bash
-export PYTHONPATH=src/. 
-python3 src/app/main.py
+export PYTHONPATH=src/.
+gunicorn src.app.main:app -b 0.0.0.0:5000 -k "uvicorn.workers.UvicornWorker" --timeout=20
 ```
 
 ## URL
@@ -20,6 +20,6 @@ python3 src/app/main.py
 - http://localhost:5000/docs
 
 ## TODO
-- [ ] execute app with gunicorn
+- [x] execute app with gunicorn
 - [ ] execute app on docker container
-- [ ] make up front side 
+- [x] make up front side 
