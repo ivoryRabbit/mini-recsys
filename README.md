@@ -1,18 +1,22 @@
 # mini-recsys
-mini recommender system with FastAPI (WIP)
+mini recommender system with FastAPI
 
 ## Environments
 - Python 3.9.4
 
+## Run
+### Local
 ```bash
 pip3 install -r requirements.txt
+
+export PYTHONPATH=src/.
+scripts/run-app.sh
 ```
 
-## Run
-
+### Docker container
 ```bash
-export PYTHONPATH=src/.
-gunicorn src.app.main:app -b 0.0.0.0:5000 -k "uvicorn.workers.UvicornWorker" --timeout=20
+docker build -t mini-recsys -f docker/Dockerfile .
+docker run -it mini-recsys -p 5000:5000
 ```
 
 ## URL
@@ -21,5 +25,5 @@ gunicorn src.app.main:app -b 0.0.0.0:5000 -k "uvicorn.workers.UvicornWorker" --t
 
 ## TODO
 - [x] execute app with gunicorn
-- [ ] execute app on docker container
-- [x] make up front side 
+- [x] execute app on docker container
+- [ ] make up front side 

@@ -4,4 +4,4 @@ set -exo pipefail
 
 export PYTHONPATH=src/.
 
-python3 src/app/main.py
+gunicorn src.app.main:app -b 0.0.0.0:5000 -k "uvicorn.workers.UvicornWorker" --timeout=60
