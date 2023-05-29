@@ -8,8 +8,6 @@ mini recommender system with FastAPI
 ### Local
 ```bash
 pip3 install -r requirements.txt
-
-export PYTHONPATH=src/.
 scripts/run-app.sh
 ```
 
@@ -26,4 +24,4 @@ docker run -it mini-recsys -p 5000:5000
 ## TODO
 - [x] execute app with gunicorn
 - [x] execute app on docker container
-- [ ] make up front side 
+- [ ] use streamlit for web application 
