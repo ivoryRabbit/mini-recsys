@@ -7,21 +7,22 @@ mini recommender system with FastAPI
 ## Run
 ### Local
 ```bash
-pip3 install -r requirements.txt
-scripts/run-app.sh
+pip3 install -r backend/requirements.txt \
+  && cd backend/src \
+  && gunicorn main:app -b :8080 -k uvicorn.workers.UvicornWorker -t 60
 ```
 
 ### Docker container
 ```bash
-docker build -t mini-recsys -f docker/Dockerfile .
-docker run -it mini-recsys -p 5000:5000
+docker build -t mini-recsys -f backend/Dockerfile . \
+  && docker run -it mini-recsys -p 8080:8080
 ```
 
 ## URL
-- http://localhost:5000/
-- http://localhost:5000/docs
+- http://localhost:8080/
+- http://localhost:8080/docs
 
 ## TODO
 - [x] execute app with gunicorn
 - [x] execute app on docker container
-- [ ] use streamlit for web application 
+- [ ] porting web application using streamlit 

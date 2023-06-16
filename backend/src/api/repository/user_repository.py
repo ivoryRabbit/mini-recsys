@@ -1,0 +1,25 @@
+import logging
+from typing import Optional
+
+from api.component.database import get_connection
+
+logger = logging.getLogger(__name__)
+
+
+class UserRepository:
+    def __init__(self):
+        self._connection = get_connection()
+
+    def get_random_user_id(self) -> Optional[str]:
+        query = f"""
+            SELECT user_id
+            FROM users
+            USING SAMPLE 1
+            """
+
+        row = self._connection.execute(query).fetchone()
+
+        if row is None:
+            return None
+
+        return str(row[0])
