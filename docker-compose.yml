@@ -6,19 +6,19 @@ services:
     build: backend/
     ports:
       - "8080:8080"
-#    networks:
-#      - deploy_network
+    networks:
+      - deploy_network
 
   frontend:
     container_name: mini-recsys-frontend
     build: frontend/
     ports:
         - "8501:8501"
-#    networks:
-#      - deploy_network
-#    depends_on:
-#      - mini-recsys-app
+    networks:
+      - deploy_network
+    depends_on:
+      - backend
 
-#networks:
-#  deploy_network:
-#    driver: bridge
+networks:
+  deploy_network:
+    driver: bridge
