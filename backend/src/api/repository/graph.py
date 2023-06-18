@@ -19,29 +19,29 @@ class InteractionGraph:
         logger.info("Build graph model...")
 
         edges = (
-            pd.read_csv(path, usecols=["user_id", "item_id"])
+            pd.read_csv(path, usecols=["user_id", "movie_id"])
             .assign(
                 user_id=lambda df: df["user_id"].map(self.get_user_node),
-                item_id=lambda df: df["item_id"].map(self.get_item_node)
+                movie_id=lambda df: df["movie_id"].map(self.get_item_node)
             )
         )
 
         graph = nx.Graph()
 
         graph.add_nodes_from(edges["user_id"].unique(), bipartite="users")
-        graph.add_nodes_from(edges["item_id"].unique(), bipartite="items")
+        graph.add_nodes_from(edges["movie_id"].unique(), bipartite="items")
         graph.add_edges_from(edges.itertuples(index=False))
 
         logger.info("Finished building graph model...")
         return graph
 
-    def get_user_node(self, user_id: str) -> str:
+    def get_user_node(self, user_id: int) -> str:
         return self._USER_PREFIX + str(user_id)
 
-    def get_item_node(self, item_id: str) -> str:
+    def get_item_node(self, item_id: int) -> str:
         return self._ITEM_PREFIX + str(item_id)
 
-    def get_sample_items_from_user(self, user_id: str, size: int = 5) -> List[str]:
+    def get_sample_items_from_user(self, user_id: int, size: int = 5) -> List[int]:
         user_node = self.get_user_node(user_id)
         sample_items = list(self._graph.neighbors(user_node))
 
@@ -53,10 +53,10 @@ class InteractionGraph:
     def get_random_neighbor(self, node: str) -> str:
         return random.choice(list(self._graph.neighbors(node)))
 
-    def get_item_id(self, node: str) -> str:
+    def get_item_id(self, node: str) -> int:
         if node.startswith(self._ITEM_PREFIX) is True:
             node = node.removeprefix(self._ITEM_PREFIX)
-        return node
+        return int(node)
 
     def has_node(self, node: str) -> bool:
         return self._graph.has_node(node)

@@ -10,4 +10,4 @@ COPY src .
 
 EXPOSE 8080
 
-ENTRYPOINT ["gunicorn", "main:app", "-b", ":8080", "-k", "uvicorn.workers.UvicornWorker", "-t", "60"]
+ENTRYPOINT ["gunicorn", "main:app", "-b", ":8080", "-k", "uvicorn.workers.UvicornWorker"]

@@ -10,7 +10,7 @@ from api.config.router import router
 from api.config import scheduler, bootstrap
 from api.component import template, database
 
-with open("logging.yml") as f:
+with open("logging.yaml") as f:
     logging_config = yaml.load(f, Loader=yaml.FullLoader)
     logging.config.dictConfig(logging_config)
 
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     uvicorn.run(
         app="main:app",
         host="0.0.0.0",
-        port=5000,
+        port=8080,
         access_log=False,
         reload=True,
     )

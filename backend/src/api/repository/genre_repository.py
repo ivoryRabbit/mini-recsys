@@ -1,7 +1,8 @@
 import logging
-from typing import Optional
+from typing import Optional, List
 
 from api.component.database import get_connection
+from api.model.genre_dto import GenreDTO
 
 logger = logging.getLogger(__name__)
 
@@ -10,16 +11,21 @@ class GenreRepository:
     def __init__(self):
         self._connection = get_connection()
 
-    def get_random_genre(self) -> Optional[str]:
+    def find_genre_by_random(self) -> Optional[GenreDTO]:
         query = f"""
-            SELECT genre
-            FROM genres
+            SELECT name
+            FROM genre
             USING SAMPLE 1
-            """
+        """
 
         row = self._connection.execute(query).fetchone()
+        return GenreDTO.deserialize(row)
 
-        if row is None:
-            return None
+    def find_all_genre(self) -> List[GenreDTO]:
+        query = f"""
+            SELECT name
+            FROM genre
+        """
 
-        return str(row[0])
+        rows = self._connection.execute(query).fetchall()
+        return GenreDTO.deserialize_list(rows)

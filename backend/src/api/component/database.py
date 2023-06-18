@@ -19,47 +19,48 @@ async def init_connection(app: FastAPI) -> None:
 
     queries = [
         """
-        PRAGMA threads=1;
+            CREATE TABLE user (
+                "id"         INT PRIMARY KEY,
+                "gender"     VARCHAR(2),
+                "age"        SMALLINT,
+                "occupation" SMALLINT,
+                "zip_code"   VARCHAR(10)
+            );
+        """,
+        f"""
+            COPY user FROM '{app.state.users_filename}' (
+                AUTO_DETECT FALSE, HEADER TRUE
+            );
         """,
         """
-        CREATE TABLE users (
-            user_id    INT PRIMARY KEY,
-            gender     VARCHAR(2),
-            age        SMALLINT,
-            occupation SMALLINT,
-            zip_code   VARCHAR(10)
-        );
+            CREATE TABLE movie (
+                "id"      INT PRIMARY KEY,
+                "title"   VARCHAR(100),
+                "genres"  VARCHAR(100),
+                "year"    INT
+            );
         """,
         f"""
-        COPY users FROM '{app.state.users_filename}' (
-            AUTO_DETECT FALSE, HEADER TRUE
-        );
-        """,
-        """
-        CREATE TABLE movies (
-            item_id INT PRIMARY KEY,
-            title   VARCHAR(100),
-            genres  VARCHAR(100),
-            year    INT
-        );
+            COPY movie FROM '{app.state.movies_filename}' (
+                AUTO_DETECT FALSE, HEADER TRUE
+            );
         """,
         f"""
-        COPY movies FROM '{app.state.movies_filename}' (
-            AUTO_DETECT FALSE, HEADER TRUE
-        );
+            CREATE TABLE popular AS (
+                SELECT 
+                    movie_id::INT AS movie_id, 
+                    COUNT(user_id) AS view,
+                    ROUND(AVG(rating), 3) AS rating
+                FROM '{app.state.ratings_filename}'
+                GROUP BY 1
+            );
         """,
         f"""
-        CREATE TABLE bestseller AS (
-            SELECT item_id, COUNT(user_id) AS popular, ROUND(AVG(rating), 3) AS rating
-            FROM '{app.state.ratings_filename}'
-            GROUP BY 1
-        );
-        """,
-        f"""
-        CREATE TABLE genres AS (
-            SELECT DISTINCT UNNEST(STR_SPLIT(genres, '|')) AS genre
-            FROM movies
-        );
+            CREATE TABLE genre AS (
+                SELECT DISTINCT UNNEST(STR_SPLIT(genres, '|')) AS name
+                FROM movie
+                ORDER BY 1
+            );
         """,
     ]
 

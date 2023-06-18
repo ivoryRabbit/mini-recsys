@@ -7,9 +7,9 @@ from typing import List, Tuple
 from fastapi import Depends
 from fastapi.requests import Request
 
-from api.model.dto import Movie
+from api.model.movie_dto import MovieDTO
 from api.repository.graph import InteractionGraph
-from api.repository.item_repository import ItemRepository
+from api.repository.movie_repository import MovieRepository
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ class RandomWalkService:
         n_p: int = 100,
         n_v: int = 10,
         beta: float = 0.95,
-        item_repository: ItemRepository = Depends(),
+        movie_repository: MovieRepository = Depends(),
     ):
         self.total_steps = total_steps
         self.alpha = alpha
@@ -31,9 +31,9 @@ class RandomWalkService:
         self.n_v = n_v
         self.beta = beta
         self._graph: InteractionGraph = request.app.state.graph
-        self._item_repository = item_repository
+        self._movie_repository = movie_repository
 
-    def inference(self, queries: List[str], top_k: int = 10) -> List[Movie]:
+    def inference(self, queries: List[int], top_k: int = 10) -> List[MovieDTO]:
         total_counter = Counter()
         max_step = self.total_steps // len(queries)
 
@@ -50,9 +50,9 @@ class RandomWalkService:
 
         results = total_counter.most_common(top_k)
         item_ids = self._refine_recommendation(results)
-        return self._item_repository.get_movie_metas(item_ids)
+        return self._movie_repository.find_movies_by_ids(item_ids)
 
-    def get_sample_items_from_user(self, user_id: str, size: int = 5) -> List[str]:
+    def get_sample_items_from_user(self, user_id: int, size: int = 5) -> List[int]:
         return self._graph.get_sample_items_from_user(user_id, size)
 
     def walk_randomly(self, query: str, max_step: int) -> Counter:
@@ -84,10 +84,10 @@ class RandomWalkService:
 
         return visit_counter
 
-    def _refine_recommendation(self, results: List[Tuple[str, int]]) -> List[str]:
+    def _refine_recommendation(self, results: List[Tuple[str, int]]) -> List[int]:
         item_ids = []
         for node_name, _ in results:
             item_id = self._graph.get_item_id(node_name)
-            item_ids.append(item_id)
+            item_ids.append(int(item_id))
 
         return item_ids

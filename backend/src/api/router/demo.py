@@ -6,7 +6,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 from api.component.template import get_template
-from api.service.bestseller_service import BestsellerService
+from api.service.popular_service import PopularService
 from api.service.item_meta_service import ItemMetaService
 from api.service.random_input_service import RandomInputService
 from api.service.random_walk_service import RandomWalkService
@@ -15,28 +15,28 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-@router.get("/bestseller_item", response_class=HTMLResponse, name="get_bestseller_item")
-async def get_bestseller_item(
+@router.get("/popular_item", response_class=HTMLResponse, name="get_popular_item")
+async def get_popular_item(
     request: Request,
     genre: str = Query(""),
     is_random: bool = Query(False),
     template: Jinja2Templates = Depends(get_template),
     random_input_service: RandomInputService = Depends(),
-    bestseller_service: BestsellerService = Depends(),
+    popular_service: PopularService = Depends(),
 ):
     context = {"request": request}
 
     if is_random is True:
-        genre = random_input_service.get_random_genre()
+        genre = random_input_service.get_random_genre_name()
 
-    popular_items = bestseller_service.get_popular_movies(genre, 10)
-    high_rated_items = bestseller_service.get_high_rated_movies(genre, 10)
+    most_viewed_items = popular_service.get_most_viewed_movies(genre, 10)
+    high_rated_items = popular_service.get_high_rated_movies(genre, 10)
 
     context["genre"] = genre
-    context["popular_items"] = [item.as_dict() for item in popular_items]
-    context["high_rated_items"] = [item.as_dict() for item in high_rated_items]
+    context["most_viewed_items"] = [item.to_dict() for item in most_viewed_items]
+    context["high_rated_items"] = [item.to_dict() for item in high_rated_items]
 
-    return template.TemplateResponse("bestseller_item.html", context)
+    return template.TemplateResponse("popular_item.html", context)
 
 
 @router.get("/related_item", response_class=HTMLResponse, name="get_related_item")
@@ -52,21 +52,21 @@ async def get_related_item(
     context = {"request": request}
 
     if is_random is True:
-        item_id = random_input_service.get_random_item_id()
+        item_id = random_input_service.get_random_movie_id()
 
     if item_id == "":
         return template.TemplateResponse("related_item.html", context)
 
-    seed_item = item_meta_service.get_item_meta(item_id)
+    seed_item = item_meta_service.get_item_meta(int(item_id))
 
     if seed_item is None:
         return template.TemplateResponse("related_item.html", context)
 
-    rec_items = random_walk_service.inference([item_id], 10)
+    rec_items = random_walk_service.inference([int(item_id)], 10)
 
     context["item_id"] = item_id
-    context["seed_item"] = seed_item.as_dict()
-    context["rec_items"] = [item.as_dict() for item in rec_items]
+    context["seed_item"] = seed_item.to_dict()
+    context["rec_items"] = [item.to_dict() for item in rec_items]
 
     return template.TemplateResponse("related_item.html", context)
 
@@ -98,7 +98,7 @@ async def get_personalized_item(
     rec_items = random_walk_service.inference(queries, 10)
 
     context["user_id"] = user_id
-    context["seed_items"] = [item.as_dict() for item in seed_items]
-    context["rec_items"] = [item.as_dict() for item in rec_items]
+    context["seed_items"] = [item.to_dict() for item in seed_items]
+    context["rec_items"] = [item.to_dict() for item in rec_items]
 
     return template.TemplateResponse("personalized_item.html", context)

@@ -46,7 +46,7 @@ def download_data(app: FastAPI):
         ratings = pd.read_csv(
             f"{LOCAL_PREFIX}/ml-1m/ratings.dat",
             delimiter="::",
-            names=["user_id", "item_id", "rating", "timestamp"],
+            names=["user_id", "movie_id", "rating", "timestamp"],
             engine="python",
             encoding="ISO-8859-1",
         )
@@ -56,7 +56,7 @@ def download_data(app: FastAPI):
         users = pd.read_csv(
             f"{LOCAL_PREFIX}/ml-1m/users.dat",
             delimiter="::",
-            names=["user_id", "gender", "age", "occupation", "zip_code"],
+            names=["id", "gender", "age", "occupation", "zip_code"],
             engine="python",
             encoding="ISO-8859-1",
         )
@@ -66,11 +66,13 @@ def download_data(app: FastAPI):
         movies = pd.read_csv(
             f"{LOCAL_PREFIX}/ml-1m/movies.dat",
             delimiter="::",
-            names=["item_id", "title", "genres"],
+            names=["id", "title", "genres"],
             engine="python",
             encoding="ISO-8859-1",
         )
-        movies[["title", "year"]] = movies["title"].str.extract(r"(?P<title>.*) [(](?P<year>\d+)[)]$")
+        movies[["title", "year"]] = movies["title"].str.extract(
+            r"(?P<title>.*) [(](?P<year>\d+)[)]$"
+        )
         movies.to_csv(app.state.movies_filename, index=False)
 
         subprocess.check_call(f"rm {LOCAL_PREFIX}/{filename}", shell=True)

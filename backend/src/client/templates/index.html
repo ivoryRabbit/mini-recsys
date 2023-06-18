@@ -1,4 +1,4 @@
-{% extends "layout-base.html" %}
+{% extends "base-layout.html" %}
 {% block content %}
 <div class="container">
     <div class="my-3">
@@ -7,7 +7,7 @@
     <hr>
     <div class="row my-3">
         <div class="col-6">
-            <a href="{{ url_for('get_bestseller_item') }}">Bestseller Movie Recommendation</a>
+            <a href="{{ url_for('get_popular_item') }}">Popular Movie Recommendation</a>
         </div>
     </div>
     <div class="row my-3">

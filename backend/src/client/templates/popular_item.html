@@ -1,14 +1,14 @@
-{% extends "layout-base.html" %}
+{% extends "base-layout.html" %}
 {% block content %}
 <div class="container">
     <div class="my-3">
-        <h2 class="me-3">Bestseller Movie Recommendation <a href="{{ url_for('index') }}" style="font-size: 15px; vertical-align: top">[Home]</a></h2>
+        <h2 class="me-3">Popular Movie Recommendation <a href="{{ url_for('index') }}" style="font-size: 15px; vertical-align: top">[Home]</a></h2>
     </div>
 
     <hr>
 
     <div class="row my-4">
-        <form class="col-6" action="{{ url_for('get_bestseller_item') }}" method="get">
+        <form class="col-6" action="{{ url_for('get_popular_item') }}" method="get">
             <div class="row">
                 <div class="col-4">
                     <label>
@@ -19,7 +19,7 @@
                     <button class="btn btn-outline-success mx-1" type="submit">Output</button>
                 </div>
                 <div class="col-2">
-                    <a class="btn btn-outline-primary mx-1" href="{{ url_for('get_bestseller_item') }}?is_random=true" role="button">Random</a>
+                    <a class="btn btn-outline-primary mx-1" href="{{ url_for('get_popular_item') }}?is_random=true" role="button">Random</a>
                 </div>
 
             </div>
@@ -30,17 +30,17 @@
 
     <div class="d-flex row">
         <div class="col p-4">
-            {% if popular_items %}
-            <h4>[Popular Movies] (#{{ popular_items|length }})</h4>
+            {% if most_viewed_items %}
+            <h4>[Most Viewed Movies] (#{{ most_viewed_items|length }})</h4>
             <table class="table table-sm caption-top">
                 <div class="row">
-                    {% for rec_item in popular_items %}
+                    {% for rec_item in most_viewed_items %}
                     <div class="row-cols-auto border px-2 py-2 small">
                         <div class="mb-1">MovieID: {{ rec_item['item_id'] }}</div>
                         <div class="mb-1">Title: {{ rec_item['title'] }}</div>
                         <div class="mb-1">Genres: {{ rec_item['genres'] }}</div>
                         <div class="mb-1">Release: {{ rec_item['year'] }}</div>
-                        <div class="mb-1">Popular: {{ rec_item['popular'] }}</div>
+                        <div class="mb-1">View: {{ rec_item['view'] }}</div>
                         <a href="{{ rec_item['url'] }}">Link</a>
                     </div>
                     {% endfor %}
