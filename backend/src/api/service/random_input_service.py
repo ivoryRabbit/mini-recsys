@@ -21,11 +21,11 @@ class RandomInputService:
         self._movie_repository = movie_repository
         self._genre_repository = genre_repository
 
-    def get_random_user_id(self) -> Optional[str]:
-        return str(self._user_repository.find_user_by_random().id)
+    def get_random_user_id(self) -> int:
+        return self._user_repository.find_user_by_random().id
 
-    def get_random_movie_id(self) -> Optional[str]:
-        return str(self._movie_repository.find_movie_by_random().id)
+    def get_random_movie_id(self) -> int:
+        return self._movie_repository.find_movie_by_random().id
 
-    def get_random_genre_name(self) -> Optional[str]:
+    def get_random_genre_name(self) -> str:
         return self._genre_repository.find_genre_by_random().name

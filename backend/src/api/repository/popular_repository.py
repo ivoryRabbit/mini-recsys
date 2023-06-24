@@ -37,6 +37,7 @@ class PopularRepository:
             SELECT p.movie_id, p.rating
             FROM popular p
             JOIN movie m ON m.id = p.movie_id AND LOWER(m.genres) LIKE '%'||$genre||'%'
+            WHERE p.view >= 10
             ORDER BY p.rating DESC, m.year DESC
             LIMIT {size}
         """

@@ -1,3 +1,4 @@
+import gc
 import yaml
 import logging.config
 
@@ -43,6 +44,7 @@ async def app_startup() -> None:
     logger.info("App startup")
 
     # Bootstrap
+    gc.freeze()
     template.init_template()
     bootstrap.init_bootstrap(app)
 

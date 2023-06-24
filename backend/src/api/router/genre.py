@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 @router.get("/all", response_model=List[str])
-async def get_all_genre(
+def get_all_genre(
     item_meta_service: ItemMetaService = Depends(),
 ) -> List[str]:
     genres = item_meta_service.get_all_genres()

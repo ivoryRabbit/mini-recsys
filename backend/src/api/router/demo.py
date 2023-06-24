@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 @router.get("/popular_item", response_class=HTMLResponse, name="get_popular_item")
-async def get_popular_item(
+def get_popular_item(
     request: Request,
     genre: str = Query(""),
     is_random: bool = Query(False),
@@ -54,7 +54,7 @@ async def get_related_item(
     if is_random is True:
         item_id = random_input_service.get_random_movie_id()
 
-    if item_id == "":
+    if item_id is None or item_id == "":
         return template.TemplateResponse("related_item.html", context)
 
     seed_item = item_meta_service.get_item_meta(int(item_id))
@@ -72,7 +72,7 @@ async def get_related_item(
 
 
 @router.get("/personalized_item", response_class=HTMLResponse, name="get_personalized_item")
-async def get_personalized_item(
+def get_personalized_item(
     request: Request,
     user_id: str = Query(""),
     is_random: bool = Query(False),
@@ -86,10 +86,10 @@ async def get_personalized_item(
     if is_random is True:
         user_id = random_input_service.get_random_user_id()
 
-    if user_id == "":
+    if user_id is None or user_id == "":
         return template.TemplateResponse("personalized_item.html", context)
 
-    queries = random_walk_service.get_sample_items_from_user(user_id)
+    queries = random_walk_service.get_sample_items_from_user(int(user_id))
     seed_items = item_meta_service.get_item_metas(queries)
 
     if len(seed_items) == 0:

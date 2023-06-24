@@ -18,11 +18,11 @@ class RandomWalkService:
     def __init__(
         self,
         request: Request,
-        total_steps: int = 10000,
+        total_steps: int = 1000,
         alpha: float = 0.3,
         n_p: int = 100,
         n_v: int = 10,
-        beta: float = 0.95,
+        beta: float = 0.15,
         movie_repository: MovieRepository = Depends(),
     ):
         self.total_steps = total_steps
@@ -79,7 +79,7 @@ class RandomWalkService:
 
                 curr_step += len_walks
 
-                if random.random() > self.beta:
+                if random.random() < self.beta:
                     curr_item = query
 
         return visit_counter

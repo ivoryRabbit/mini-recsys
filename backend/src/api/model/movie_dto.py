@@ -8,7 +8,7 @@ class MovieDTO:
     title: str
     genres: str
     year: int
-    views: Optional[int] = None
+    view: Optional[int] = None
     rating: Optional[float] = None
 
     def __post_init__(self):
@@ -32,6 +32,6 @@ class MovieDTO:
             "year": self.year,
             "genres": self.genres,
             "url": self.url,
-            "views": self.views,
+            "view": self.view,
             "rating": self.rating,
         }
