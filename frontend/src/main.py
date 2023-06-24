@@ -1,85 +1,12 @@
-import pandas as pd
-import requests
 import streamlit as st
 from streamlit_option_menu import option_menu
 
+from page.home import home
+from page.popular import popular_movies
+from page.personalized import personalized_movies
+from page.related import related_movies
+
 st.set_page_config(page_title="Mini-RecSys", page_icon="🤖", layout="wide")
-backend_url = "http://backend:8080"
-
-
-def home():
-    st.title("Welcome to Mini-RecSys 👋")
-
-    st.markdown(
-        """
-        Mini-RecSys is a graph-based recommendation system with Python.
-
-        **👈 Select a demo from the menu on the left**
-
-        ### Dependency
-        - FastAPI
-        - Streamlit
-        - NetworkX
-        - DuckDB
-
-        ### Reference
-        - [Pixie: A System for Recommending 3+ Billion Items to 200+ Million Users in Real-Time](https://arxiv.org/pdf/1711.07601.pdf)
-        """
-    )
-
-
-def popular_movies():
-    st.title("Popular Movies")
-
-    session = requests.Session()
-
-    @st.cache_data
-    def get_all_genres():
-        genre_url = f"{backend_url}/genre/all"
-        return session.get(genre_url).json()
-
-    genre = st.selectbox("Choose a genre", ["ALL"] + get_all_genres())
-
-    if genre == "ALL":
-        url = f"{backend_url}/rec/movie/popular?size=10"
-    else:
-        url = f"{backend_url}/rec/movie/popular?genre={genre}&size=10"
-
-    response = session.get(url).json()
-
-    col1, col2 = st.columns([1, 1])
-
-    with col1:
-        st.subheader("[Most Viewed Movies]")
-        st.data_editor(pd.DataFrame(response), key="viewed")
-
-    with col2:
-        st.subheader("[High Rated Movies]")
-        st.data_editor(pd.DataFrame(response), key="rated")
-
-
-def personalized_movies():
-    st.title("Personalized Movies")
-
-    session = requests.Session()
-
-    url = f"{backend_url}/rec/movie/personalized?user_id=1&size=10"
-    response = session.get(url).json()
-
-    st.subheader("[Personalized Movies]")
-    st.dataframe(response)
-
-
-def related_movies():
-    st.title("Related Movies")
-
-    session = requests.Session()
-
-    url = f"{backend_url}/rec/movie/related?item_id=1&size=10"
-    response = session.get(url).json()
-
-    st.subheader("[Related Movies]")
-    st.data_editor(response)
 
 
 def unused_example_1():

@@ -10,13 +10,13 @@ mini recommender system with FastAPI and Streamlit
 # launch FastAPI application server
 pip3 install -r backend/requirements.txt \
   && cd backend/src \
-  && gunicorn main:app -b :8080 -k uvicorn.workers.UvicornWorker
+  && uvicorn main:app --port 8080 --reload
 ```
 ```shell
 # launch Streamlit application server
 pip3 install -r frontend/requirements.txt \
   && cd frontend/src \
-  && streamlit run main.py
+  && streamlit run main.py --server.port 8501
 ```
 
 ### Docker container
@@ -32,4 +32,5 @@ docker-compose up --build
 - [x] execute app with gunicorn
 - [x] execute app on docker container
 - [x] porting web application using streamlit 
-- [ ] improve streamlit UI for recommendation result 
+- [ ] improve streamlit UI for recommendation result
+- [ ] test and fix bugs

@@ -11,4 +11,6 @@ COPY src .
 
 EXPOSE 8501
 
+ENV is_docker 1
+
 ENTRYPOINT ["streamlit", "run", "main.py", "--server.port", "8501"]
