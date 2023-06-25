@@ -30,6 +30,8 @@ docker-compose up --build
 ### UI
 - [http://localhost:8501](http://localhost:8501)
 
+<img src="https://github.com/ivoryRabbit/mini-recsys/assets/30110145/a3e6c4a8-4bc6-46c2-a107-3c04221acbd5">
+
 ### Docs
 - [http://localhost:8080/docs](http://localhost:8080/docs)
 
@@ -38,5 +40,5 @@ docker-compose up --build
 - [x] execute app with gunicorn
 - [x] execute app on docker container
 - [x] porting web application using streamlit 
-- [ ] improve streamlit UI for recommendation result
-- [ ] test and fix bugs
+- [x] improve streamlit UI for recommendation result
+- [x] test and fix bugs
