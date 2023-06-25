@@ -1,29 +1,37 @@
-import os
-
 import pandas as pd
 import streamlit as st
 from requests import Session
 
-backend_url = "http://backend:8080" if os.environ.get("is_docker") else "http://localhost:8080"
+from config.client import backend_url
 
 
 def personalized_movies(session: Session = Session()):
     st.title("Personalized Movies")
 
-    if "is_random" not in st.session_state:
-        st.session_state.is_random = False
+    if "personalized_movies" not in st.session_state:
+        st.session_state["personalized_movies"] = None
 
-    def set_use_random(is_random: bool) -> None:
-        st.session_state.is_random = is_random
+    def request_recommend(is_random: bool):
+        if is_random is True:
+            user_id = None
+        else:
+            user_id = str(st.session_state["user_id"])
+
+        url = f"{backend_url}/rec/movie/personalized"
+        params = {"user_id": user_id, "is_random": is_random, "size": 10}
+
+        response = session.get(url, params=params)
+
+        if response.status_code == 200:
+            data = response.json()
+            st.session_state["user_id"] = str(data["user_id"])
+        else:
+            data = None
+
+        st.session_state["personalized_movies"] = data
 
     with st.form(key="form"):
-        placeholder = st.empty()
-
-        user_id = placeholder.text_input(
-            label="👇 Enter user ID",
-            value="",
-            placeholder="User ID",
-        )
+        st.text_input("👇 Enter user ID", placeholder="User ID", key="user_id")
 
         col1, col2, _ = st.columns([1, 1, 8])
 
@@ -31,44 +39,30 @@ def personalized_movies(session: Session = Session()):
             st.form_submit_button(
                 label="Input",
                 use_container_width=True,
-                on_click=set_use_random,
+                on_click=request_recommend,
                 args=(False, ),
             )
         with col2:
             st.form_submit_button(
                 label="Random",
                 use_container_width=True,
-                on_click=set_use_random,
+                on_click=request_recommend,
                 args=(True, ),
             )
 
-    if st.session_state.is_random is True:
-        url = f"{backend_url}/rec/movie/personalized?is_random=true&size=10"
-    elif user_id.isnumeric():
-        url = f"{backend_url}/rec/movie/personalized?user_id={user_id}&size=10"
-    else:
+    result = st.session_state["personalized_movies"]
+
+    if result is None:
         st.stop()
         return
-
-    response = session.get(url)
-
-    if response.status_code == 200:
-        data = response.json()
-    else:
-        st.stop()
-        return
-
-    user_id = data["user_id"]
-    st.text(f"user_id = {user_id}")
 
     col1, col2 = st.columns([1, 1])
+    fields = ["id", "title", "genres", "year"]
 
     with col1:
-        fields = ["id", "title", "genres", "year"]
-
         st.subheader(f"[Seed Movies]")
         st.data_editor(
-            pd.DataFrame(data["seed"])[fields],
+            pd.DataFrame(result["seed"])[fields],
             column_config={
                 "id": st.column_config.Column(
                     "Movie ID",
@@ -100,14 +94,13 @@ def personalized_movies(session: Session = Session()):
         )
 
     with col2:
-        if len(data["rec"]) == 0:
+        st.subheader("[Recommended Movies]")
+
+        if len(result["rec"]) == 0:
             st.stop()
 
-        fields = ["id", "title", "genres", "year"]
-
-        st.subheader("[Recommended Movies]")
         st.data_editor(
-            pd.DataFrame(data["rec"])[fields],
+            pd.DataFrame(result["rec"])[fields],
             column_config={
                 "id": st.column_config.Column(
                     "Movie ID",
