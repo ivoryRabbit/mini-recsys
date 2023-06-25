@@ -19,10 +19,13 @@ class InteractionGraph:
         logger.info("Build graph model...")
 
         edges = (
-            pd.read_csv(path, usecols=["user_id", "movie_id"])
-            .assign(
-                user_id=lambda df: df["user_id"].map(self.get_user_node),
-                movie_id=lambda df: df["movie_id"].map(self.get_item_node)
+            pd.read_csv(
+                path,
+                usecols=["user_id", "movie_id"],
+                converters={
+                    "user_id": lambda x: self._USER_PREFIX + str(x),
+                    "movie_id": lambda x: self._ITEM_PREFIX + str(x),
+                }
             )
         )
 
@@ -36,10 +39,16 @@ class InteractionGraph:
         return graph
 
     def get_user_node(self, user_id: int) -> str:
-        return self._USER_PREFIX + str(user_id)
+        node = self._USER_PREFIX + str(user_id)
+        if self.is_valid_node(node) is False:
+            raise Exception("Invalid node id")
+        return node
 
     def get_item_node(self, item_id: int) -> str:
-        return self._ITEM_PREFIX + str(item_id)
+        node = self._ITEM_PREFIX + str(item_id)
+        if self.is_valid_node(node) is False:
+            raise Exception("Invalid node id")
+        return node
 
     def get_sample_items_from_user(self, user_id: int, size: int = 5) -> List[int]:
         user_node = self.get_user_node(user_id)
@@ -58,5 +67,5 @@ class InteractionGraph:
             node = node.removeprefix(self._ITEM_PREFIX)
         return int(node)
 
-    def has_node(self, node: str) -> bool:
+    def is_valid_node(self, node: str) -> bool:
         return self._graph.has_node(node)

@@ -44,11 +44,10 @@ def get_related_item(
         if is_random is True:
             item_id = random_input_service.get_random_movie_id()
 
-        seed_items = [item_meta_service.get_item_meta(item_id)]
-        print(item_id)
-        print(seed_items)
+        queries = [item_id]
 
-        rec_items = random_walk_service.inference([item_id], size)
+        seed_items = item_meta_service.get_item_metas(queries)
+        rec_items = random_walk_service.inference(queries, size)
     except Exception:
         raise HTTPException(status_code=404, detail="Item not found")
 

@@ -5,13 +5,12 @@ import logging.config
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 
 from api.config.router import router
 from api.config import scheduler, bootstrap
-from api.component import template, database
+from api.component import database
 
-with open("logging.yaml") as f:
+with open("resource/logging.yaml") as f:
     logging_config = yaml.load(f, Loader=yaml.FullLoader)
     logging.config.dictConfig(logging_config)
 
@@ -32,12 +31,6 @@ app.add_middleware(
 
 app.include_router(router)
 
-app.mount(
-    "/static",
-    StaticFiles(directory="client/static"),
-    name="static",
-)
-
 
 @app.on_event("startup")
 async def app_startup() -> None:
@@ -45,7 +38,6 @@ async def app_startup() -> None:
 
     # Bootstrap
     gc.freeze()
-    template.init_template()
     bootstrap.init_bootstrap(app)
 
     await scheduler.init_scheduler(app)

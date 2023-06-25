@@ -62,7 +62,7 @@ class RandomWalkService:
 
         visit_counter = Counter()
 
-        if self._graph.has_node(query) is False:
+        if self._graph.is_valid_node(query) is False:
             return visit_counter
 
         while curr_step < max_step and max_visited < self.n_p:
