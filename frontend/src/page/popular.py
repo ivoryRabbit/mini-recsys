@@ -15,14 +15,20 @@ def popular_movies(session: Session = Session()):
 
     st.title("Popular Movies")
 
-    genre = st.selectbox("Choose a genre", ["ALL"] + get_all_genres())
+    genre = st.selectbox("Choose a genre", ["All"] + get_all_genres())
 
-    if genre == "ALL":
+    if genre == "All":
         url = f"{backend_url}/rec/movie/popular?size=10"
     else:
         url = f"{backend_url}/rec/movie/popular?genre={genre}&size=10"
 
-    response = session.get(url).json()
+    response = session.get(url)
+
+    if response.status_code == 200:
+        data = response.json()
+    else:
+        st.stop()
+        return
 
     col1, col2 = st.columns([1, 1])
 
@@ -31,7 +37,7 @@ def popular_movies(session: Session = Session()):
 
         st.subheader("[Most Viewed Movies]")
         st.data_editor(
-            pd.DataFrame(response["view"])[fields],
+            pd.DataFrame(data["view"])[fields],
             column_config={
                 "id": st.column_config.Column(
                     "Movie ID",
@@ -39,7 +45,11 @@ def popular_movies(session: Session = Session()):
                     width="small",
                     required=True,
                 ),
-                "title": "Title",
+                "title": st.column_config.Column(
+                    "Title",
+                    help="Title of movie",
+                    width="medium",
+                ),
                 "year": st.column_config.TextColumn(
                     "Release",
                     help="Movie release year",
@@ -49,9 +59,10 @@ def popular_movies(session: Session = Session()):
                 "view": st.column_config.ProgressColumn(
                     "View Count",
                     help="Count of total view",
+                    width="medium",
                     format="%f",
                     min_value=0,
-                    max_value=response["view"][0]["view"],
+                    max_value=data["view"][0]["view"],
                 ),
             },
             disabled=fields,
@@ -65,7 +76,7 @@ def popular_movies(session: Session = Session()):
 
         st.subheader("[High Rated Movies]")
         st.data_editor(
-            pd.DataFrame(response["rating"])[fields],
+            pd.DataFrame(data["rating"])[fields],
             column_config={
                 "id": st.column_config.Column(
                     "Movie ID",

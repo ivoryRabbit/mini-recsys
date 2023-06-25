@@ -3,7 +3,9 @@ mini recommender system with FastAPI and Streamlit
 
 ## Environments
 - Python 3.9.4
+- Docker
 
+---
 ## Run
 ### Local
 ```shell
@@ -23,11 +25,15 @@ pip3 install -r frontend/requirements.txt \
 ```shell
 docker-compose up --build
 ```
-
+---
 ## URL
-- [UI](http://localhost:8501)
-- [Docs](http://localhost:8080/docs)
+### UI
+- [http://localhost:8501](http://localhost:8501)
 
+### Docs
+- [http://localhost:8080/docs](http://localhost:8080/docs)
+
+---
 ## TODO
 - [x] execute app with gunicorn
 - [x] execute app on docker container

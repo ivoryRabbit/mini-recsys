@@ -6,7 +6,7 @@ def home():
 
     st.markdown(
         """
-        Mini-RecSys is a graph-based recommendation system with Python.
+        Mini-RecSys is a random-walk based recommendation system with Python.
 
         **👈 Select a demo from the menu on the left**
 

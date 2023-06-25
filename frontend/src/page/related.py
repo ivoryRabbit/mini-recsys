@@ -10,20 +10,56 @@ backend_url = "http://backend:8080" if os.environ.get("is_docker") else "http://
 def related_movies(session: Session = Session()):
     st.title("Related Movies")
 
+    if "is_random" not in st.session_state:
+        st.session_state.is_random = False
+
+    def set_use_random(is_random: bool) -> None:
+        st.session_state.is_random = is_random
+
     with st.form(key="form"):
-        movie_id = st.text_input(
-            label="Enter movie ID 👇. Random if no value is entered",
+        placeholder = st.empty()
+
+        item_id = placeholder.text_input(
+            label="👇 Enter movie ID",
+            value="",
             placeholder="Movie ID",
-            value=""
         )
-        st.form_submit_button(label="Input")
 
-    if movie_id == "":
-        url = f"{backend_url}/rec/movie/related?size=10&is_random=true"
+        col1, col2, _ = st.columns([1, 1, 8])
+
+        with col1:
+            st.form_submit_button(
+                label="Input",
+                use_container_width=True,
+                on_click=set_use_random,
+                args=(False, ),
+            )
+        with col2:
+            st.form_submit_button(
+                label="Random",
+                use_container_width=True,
+                on_click=set_use_random,
+                args=(True, ),
+            )
+
+    if st.session_state.is_random is True:
+        url = f"{backend_url}/rec/movie/related?is_random=true&size=10"
+    elif item_id.isnumeric():
+        url = f"{backend_url}/rec/movie/related?item_id={item_id}&size=10"
     else:
-        url = f"{backend_url}/rec/movie/related?item_id={movie_id}&size=10"
+        st.stop()
+        return
 
-    response = session.get(url).json()
+    response = session.get(url)
+
+    if response.status_code == 200:
+        data = response.json()
+    else:
+        st.stop()
+        return
+
+    item_id = data["item_id"]
+    st.text(f"item_id = {item_id}")
 
     col1, col2 = st.columns([1, 1])
 
@@ -32,7 +68,7 @@ def related_movies(session: Session = Session()):
 
         st.subheader("[Seed Movies]")
         st.data_editor(
-            pd.DataFrame(response["seed"])[fields],
+            pd.DataFrame(data["seed"])[fields],
             column_config={
                 "id": st.column_config.Column(
                     "Movie ID",
@@ -64,11 +100,14 @@ def related_movies(session: Session = Session()):
         )
 
     with col2:
+        if len(data["rec"]) == 0:
+            st.stop()
+
         fields = ["id", "title", "genres", "year"]
 
         st.subheader("[Recommended Movies]")
         st.data_editor(
-            pd.DataFrame(response["rec"])[fields],
+            pd.DataFrame(data["rec"])[fields],
             column_config={
                 "id": st.column_config.Column(
                     "Movie ID",
