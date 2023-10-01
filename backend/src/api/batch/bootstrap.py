@@ -1,4 +1,3 @@
-import os
 import logging
 import subprocess
 import zipfile
@@ -10,18 +9,17 @@ from fastapi import FastAPI
 logger = logging.getLogger(__name__)
 
 LOCAL_PREFIX = "/tmp/dataset"
+FILENAME = "ml-1m"
 MARKER = "_SUCCESS"
-STATUS = "_RUNNING"
 
 
 def download_data(app: FastAPI):
     logger.info("Start loading MovieLens dataset...")
 
-    _local_path = Path(LOCAL_PREFIX).resolve()
-    _local_path.mkdir(parents=True, exist_ok=True)
+    local_path = Path(LOCAL_PREFIX).resolve()
+    local_path.mkdir(parents=True, exist_ok=True)
 
-    filename = "ml-1m.zip"
-    marker_path = str(_local_path.joinpath(MARKER))
+    marker_path = str(local_path.joinpath(MARKER))
 
     app.state.ratings_filename = f"{LOCAL_PREFIX}/ratings.csv"
     app.state.users_filename = f"{LOCAL_PREFIX}/users.csv"
@@ -31,20 +29,16 @@ def download_data(app: FastAPI):
         logger.info("MovieLens dataset already exists...")
         return
 
-    if os.getenv("status") == STATUS:
-        return
-
-    os.environ["status"] = STATUS
-
     try:
-        download_url = f"https://files.grouplens.org/datasets/movielens/{filename}"
-        subprocess.check_call(f"curl -o {LOCAL_PREFIX}/{filename} {download_url}", shell=True)
+        zip_filename = f"{FILENAME}.zip"
+        download_url = f"https://files.grouplens.org/datasets/movielens/{zip_filename}"
+        subprocess.check_call(f"curl -o {LOCAL_PREFIX}/{zip_filename} {download_url}", shell=True)
 
-        file_zip = zipfile.ZipFile(f"{LOCAL_PREFIX}/{filename}")
-        file_zip.extractall(_local_path)
+        file_zip = zipfile.ZipFile(f"{LOCAL_PREFIX}/{zip_filename}")
+        file_zip.extractall(local_path)
 
         ratings = pd.read_csv(
-            f"{LOCAL_PREFIX}/ml-1m/ratings.dat",
+            f"{LOCAL_PREFIX}/{FILENAME}/ratings.dat",
             delimiter="::",
             names=["user_id", "movie_id", "rating", "timestamp"],
             engine="python",
@@ -54,7 +48,7 @@ def download_data(app: FastAPI):
         ratings.to_csv(app.state.ratings_filename, index=False)
 
         users = pd.read_csv(
-            f"{LOCAL_PREFIX}/ml-1m/users.dat",
+            f"{LOCAL_PREFIX}/{FILENAME}/users.dat",
             delimiter="::",
             names=["id", "gender", "age", "occupation", "zip_code"],
             engine="python",
@@ -64,7 +58,7 @@ def download_data(app: FastAPI):
         users.to_csv(app.state.users_filename, index=False)
 
         movies = pd.read_csv(
-            f"{LOCAL_PREFIX}/ml-1m/movies.dat",
+            f"{LOCAL_PREFIX}/{FILENAME}/movies.dat",
             delimiter="::",
             names=["id", "title", "genres"],
             engine="python",
@@ -75,8 +69,8 @@ def download_data(app: FastAPI):
         )
         movies.to_csv(app.state.movies_filename, index=False)
 
-        subprocess.check_call(f"rm {LOCAL_PREFIX}/{filename}", shell=True)
-        subprocess.check_call(f"rm -rf {LOCAL_PREFIX}/ml-1m", shell=True)
+        subprocess.check_call(f"rm {LOCAL_PREFIX}/{zip_filename}", shell=True)
+        subprocess.check_call(f"rm -rf {LOCAL_PREFIX}/{FILENAME}", shell=True)
         subprocess.check_call(f"touch {marker_path}", shell=True)
 
         logger.info("Finished downloading dataset...")
@@ -85,5 +79,3 @@ def download_data(app: FastAPI):
         subprocess.check_call(f"rm -rf {LOCAL_PREFIX}", shell=True)
 
         logger.info("Failed to download dataset...: %s", ex)
-
-    del os.environ["status"]

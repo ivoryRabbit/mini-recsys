@@ -17,7 +17,7 @@ with open("resource/logging.yaml") as f:
 logger = logging.getLogger(__name__)
 
 app = FastAPI(
-    title="mini-recommender-system",
+    title="mini-recsys",
     version="0.1.0",
 )
 
