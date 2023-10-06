@@ -10,14 +10,14 @@ mini recommender system with FastAPI and Streamlit
 ### Local
 ```shell
 # launch FastAPI application server
-pip3 install -r backend/requirements.txt \
-  && cd backend/src \
+pip3 install -r server/requirements.txt \
+  && cd server/src \
   && uvicorn main:app --port 8080 --reload
 ```
 ```shell
 # launch Streamlit application server
-pip3 install -r frontend/requirements.txt \
-  && cd frontend/src \
+pip3 install -r client/requirements.txt \
+  && cd client/src \
   && streamlit run main.py --server.port 8501
 ```
 
@@ -30,7 +30,7 @@ docker-compose up --build
 ### UI
 - [http://localhost:8501](http://localhost:8501)
 
-<img src="https://github.com/ivoryRabbit/mini-recsys/assets/30110145/a3e6c4a8-4bc6-46c2-a107-3c04221acbd5">
+![Demo UI](https://github.com/ivoryRabbit/mini-recsys/assets/30110145/a3e6c4a8-4bc6-46c2-a107-3c04221acbd5)
 
 ### Docs
 - [http://localhost:8080/docs](http://localhost:8080/docs)

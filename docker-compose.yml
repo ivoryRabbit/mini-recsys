@@ -1,23 +1,23 @@
 version: "3.7"
 
 services:
-  backend:
-    container_name: mini-recsys-backend
-    build: backend/
+  server:
+    container_name: mini-recsys-server
+    build: server/
     ports:
       - "8080:8080"
     networks:
       - deploy_network
 
-  frontend:
-    container_name: mini-recsys-frontend
-    build: frontend/
+  client:
+    container_name: mini-recsys-client
+    build: client/
     ports:
         - "8501:8501"
     networks:
       - deploy_network
     depends_on:
-      - backend
+      - server
 
 networks:
   deploy_network:

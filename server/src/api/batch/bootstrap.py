@@ -8,7 +8,7 @@ from fastapi import FastAPI
 
 logger = logging.getLogger(__name__)
 
-LOCAL_PREFIX = "/tmp/dataset"
+LOCAL_PREFIX = "/tmp/mini-recsys/dataset"
 FILENAME = "ml-1m"
 MARKER = "_SUCCESS"
 
